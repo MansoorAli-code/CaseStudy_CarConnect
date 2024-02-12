@@ -111,13 +111,18 @@ namespace CarConnect.Service
 
         public void UpdateAdmin(string username, Admin admin)
         {
-            if (_adminRepository.UpdateAdmin(admin, username))
+            try
             {
-                Console.WriteLine("Updated successfully");
-            }
-            else
-            {
-                Console.WriteLine("Updation failed");
+                if (_adminRepository.UpdateAdmin(admin, username))
+                {
+                    Console.WriteLine("Updated successfully");
+                }
+                else
+                {
+                    throw new  AdminNotFoundException("Updation failed");
+                }
+            }catch (AdminNotFoundException afe) {
+                Console.WriteLine(afe.Message);
             }
         }
     
@@ -166,15 +171,21 @@ namespace CarConnect.Service
 
             admin.JoinDate = DateTime.Now;
 
-            if (_adminRepository.RegisterAdmin(admin))
+            try
             {
-                Console.WriteLine("Admin Registered Successfully, Login with your credentials");
-                return;
-            }
-            else
+                if (_adminRepository.RegisterAdmin(admin))
+                {
+                    Console.WriteLine("Admin Registered Successfully, Login with your credentials");
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("Admin not Registered, Try again");
+                    return;
+                }
+            }catch (Exception ex)
             {
-                Console.WriteLine("Admin not Registered, Try again");
-                return;
+                Console.WriteLine(ex.Message);
             }
         }
 

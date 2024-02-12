@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CarConnect")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a948666b94674977a4233a22e64f65d86b6a5cc7")]
 [assembly: System.Reflection.AssemblyProductAttribute("CarConnect")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CarConnect")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

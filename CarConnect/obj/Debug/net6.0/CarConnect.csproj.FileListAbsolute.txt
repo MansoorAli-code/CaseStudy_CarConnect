@@ -32,3 +32,4 @@ C:\Users\mansoor\Documents\c#\CaseStudy\CarConnect\obj\Debug\net6.0\refint\CarCo
 C:\Users\mansoor\Documents\c#\CaseStudy\CarConnect\obj\Debug\net6.0\CarConnect.pdb
 C:\Users\mansoor\Documents\c#\CaseStudy\CarConnect\obj\Debug\net6.0\CarConnect.genruntimeconfig.cache
 C:\Users\mansoor\Documents\c#\CaseStudy\CarConnect\obj\Debug\net6.0\ref\CarConnect.dll
+C:\Users\mansoor\Documents\c#\CaseStudy\CarConnect\obj\Debug\net6.0\CarConnect.sourcelink.json

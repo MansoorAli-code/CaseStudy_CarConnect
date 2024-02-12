@@ -4,6 +4,7 @@ using CarConnect.Repository;
 using CarConnect.Service;
 
 using System;
+using System.Text;
 
 namespace CarConnect
 {
@@ -13,17 +14,21 @@ namespace CarConnect
         static ICustomerService customerService = new CustomerService();
         static IReservationService reservationService = new ReservationService();
         static IVehicleService vehicleService = new VehicleService();
+        static IReportService reportService = new ReportService();
         static void Main()
         {
 
-            Console.WriteLine("Welcome to Car connect, A car rental platform");
-
+            Console.WriteLine("===============================================");
+            Console.WriteLine("          Welcome to Car Connect");
+            Console.WriteLine("      Your Premier Car Rental Platform");
+            Console.WriteLine("===============================================");
             Console.WriteLine("Please select your role:");
             Console.WriteLine("1. Customer");
             Console.WriteLine("2. Admin");
             Console.WriteLine("3. Guest");
             Console.WriteLine("4. Exit");
-            Console.WriteLine("Enter Your choice: ");
+            Console.Write("Enter your choice (1-4): ");
+
             int roleChoice;
             while (!int.TryParse(Console.ReadLine(), out roleChoice) || roleChoice < 1 || roleChoice > 4)
             {
@@ -638,71 +643,104 @@ namespace CarConnect
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("\nCustomer Login");
-                Console.WriteLine("1. Login");
-                Console.WriteLine("2. Register");
-                Console.WriteLine("3. Exit");
-                Console.WriteLine("Enter Your choice: ");
+                Console.WriteLine("╔════════════════════════╗");
+                Console.WriteLine("║       Customer Login    ║");
+                Console.WriteLine("╠════════════════════════╣");
+                Console.WriteLine("║ 1. Login                ║");
+                Console.WriteLine("║ 2. Register             ║");
+                Console.WriteLine("║ 3. Exit                 ║");
+                Console.WriteLine("╚════════════════════════╝");
+                Console.Write("Enter your choice: ");
+
                 int choice;
-                while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 4)
+                while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 3)
                 {
                     Console.WriteLine("Invalid choice. Please enter a valid number.");
+                    Console.Write("Enter your choice: ");
                 }
-                switch(choice)
+
+                switch (choice)
                 {
                     case 1:
-                        Console.WriteLine("Customer Login");
-
+                        Console.WriteLine("\nCustomer Login");
                         Console.Write("Enter your username: ");
-                        string? username = Console.ReadLine();
+                        string username = Console.ReadLine();
                         Console.Write("Enter your password: ");
-                        string? password = Console.ReadLine();
+                        string password = GetMaskedInput();
                         int id = customerService.AuthenticateCustomer(username, password);
-                        if (id!=-1)
+                        if (id != -1)
                         {
-                            Console.WriteLine("Login successful!");
-                            CustomerMenu(username,id);
+                            Console.WriteLine("\nLogin successful!");
+                            CustomerMenu(username, id);
                         }
                         else
                         {
-                            Console.WriteLine("Login failed. Invalid credentials.");
+                            Console.WriteLine("\nLogin failed. Invalid credentials.");
+                            Console.WriteLine("Press any key to continue...");
+                            Console.ReadKey();
                         }
                         break;
                     case 2:
+                        Console.Clear();
+                        Console.WriteLine("Customer Registration");
                         customerService.RegisterCustomer();
                         break;
                     case 3:
                         return;
                 }
             }
-            
         }
+
+        static string GetMaskedInput()
+        {
+            StringBuilder password = new StringBuilder();
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+                {
+                    password.Append(key.KeyChar);
+                    Console.Write("*");
+                }
+                else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password.Remove(password.Length - 1, 1);
+                    Console.Write("\b \b");
+                }
+            } while (key.Key != ConsoleKey.Enter);
+            Console.WriteLine();
+            return password.ToString();
+        }
+
 
         static void AdminLogin()
         {
-            
-            Console.WriteLine("Admin Login");
+            Console.Clear();
+            Console.WriteLine("╔════════════════════════╗");
+            Console.WriteLine("║        Admin Login      ║");
+            Console.WriteLine("╚════════════════════════╝");
 
             Console.Write("Enter your username: ");
             string username = Console.ReadLine();
             Console.Write("Enter your password: ");
-            string password = Console.ReadLine();
-
+            string password = GetMaskedInput();
 
             if (adminService.Authenticate(username, password))
             {
-                Console.WriteLine("Login successful!");
+                Console.WriteLine("\nLogin successful!");
                 AdminMenu();
             }
             else
             {
-                Console.WriteLine("Login failed. Invalid credentials.");
+                Console.WriteLine("\nLogin failed. Invalid credentials.");
             }
         }
 
         static void GuestLogin()
         {
-            Console.WriteLine("You have logged in as a guest");
+            Console.Clear();
+            Console.WriteLine("You have logged in as a guest\n");
             GuestMenu();
         }
 
@@ -710,12 +748,15 @@ namespace CarConnect
         {
             while (true)
             {
-                Console.WriteLine("\nCustomer Menu");
-                Console.WriteLine("1. View Vehicles");
-                Console.WriteLine("2. Make a Reservation");
-                Console.WriteLine("3. View Reservations");
-                Console.WriteLine("4. Logout");
-                Console.WriteLine("Enter Your choice: ");
+                Console.WriteLine("╔════════════════════════════╗");
+                Console.WriteLine("║        Customer Menu       ║");
+                Console.WriteLine("╠════════════════════════════╣");
+                Console.WriteLine("║ 1. View Vehicles           ║");
+                Console.WriteLine("║ 2. Make a Reservation      ║");
+                Console.WriteLine("║ 3. View Reservations       ║");
+                Console.WriteLine("║ 4. Logout                  ║");
+                Console.WriteLine("╚════════════════════════════╝");
+                Console.Write("Enter your choice: ");
                 int choice;
                 while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 4)
                 {
@@ -725,6 +766,7 @@ namespace CarConnect
                 switch (choice)
                 {
                     case 1:
+                        Console.Clear();
                         vehicleService.GetAvailableVehicles();
                         break;
                     case 2:
@@ -747,22 +789,23 @@ namespace CarConnect
         {
             while (true)
             {
-                Console.WriteLine("\nAdmin Menu");
-                Console.WriteLine("1. Register a new admin");
-                Console.WriteLine("2. Update a admin");
-                Console.WriteLine("3. Delete an existing admin");
-                Console.WriteLine("4. Get all customers");
-                Console.WriteLine("5. Update a customer by id");
-                Console.WriteLine("6. Delete a customer by id");
-                Console.WriteLine("7. Add Vehicle");
-                Console.WriteLine("8. Update Vehicle");
-                Console.WriteLine("9. Delete Vehicle");
-                Console.WriteLine("10. View all Reservations");
-                Console.WriteLine("11. Delete a reservation");
-                Console.WriteLine("12. Get Total Cost of a reservation");
-                Console.WriteLine("13. Generate the reports");
-                Console.WriteLine("14. Logout");
-                Console.WriteLine("Enter Your choice: ");
+                Console.WriteLine("╔════════════════════════════╗");
+                Console.WriteLine("║          Admin Menu         ║");
+                Console.WriteLine("╠════════════════════════════╣");
+                Console.WriteLine("║ 1. Register a new admin     ║");
+                Console.WriteLine("║ 2. Update an admin          ║");
+                Console.WriteLine("║ 3. Delete an existing admin ║");
+                Console.WriteLine("║ 4. Get all customers        ║");
+                Console.WriteLine("║ 5. Update a customer by id  ║");
+                Console.WriteLine("║ 6. Delete a customer by id  ║");
+                Console.WriteLine("║ 7. Add Vehicle              ║");
+                Console.WriteLine("║ 8. Update Vehicle           ║");
+                Console.WriteLine("║ 9. Delete Vehicle           ║");
+                Console.WriteLine("║ 10. Delete a reservation    ║");
+                Console.WriteLine("║ 11. Generate the reports    ║");
+                Console.WriteLine("║ 12. Logout                  ║");
+                Console.WriteLine("╚════════════════════════════╝");
+                Console.Write("Enter your choice: ");
                 int choice;
                 while (!int.TryParse(Console.ReadLine(), out choice) || choice <0 || choice > 14)
                 {
@@ -826,23 +869,13 @@ namespace CarConnect
                         break;
 
                     case 10:
-                        
-                        Console.WriteLine("Option 10 selected: View all Reservations");
-                        reservationService.GetAllReservations();
-                        break;
-
-                    case 11:
                         Console.WriteLine("Option 11 selected: Delete a reservation");
                         reservationService.CancelReservation();
                         break;
-
-                    case 12:
-                        Console.WriteLine("Option 12 selected: Get Total Amount of Reservation");
-                        reservationService.CalculateTotalCost();
+                    case 11:
+                        Console.WriteLine("Option 12 selected: Reports");
+                        ReportMenu();
                         break;
-                    case 13:
-                        
-
                     default:
                         Console.WriteLine("Invalid choice. Please enter a valid number.");
                         break;
@@ -879,6 +912,41 @@ namespace CarConnect
                         CustomerLogin();
                         break;
                     case 3:
+                        Console.WriteLine("Exiting ");
+                        return;
+                }
+            }
+        }
+        static void ReportMenu()
+        {
+            while (true)
+            {
+
+                Console.WriteLine("\nReport Menu");
+                Console.WriteLine("1. Get Reservation History");
+                Console.WriteLine("2. Get Vehicle Utilization Data");
+                Console.WriteLine("3. Get Revenue Data");
+                Console.WriteLine("4. Logout");
+                Console.WriteLine("Enter Your choice: ");
+                int choice;
+                while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 3)
+                {
+                    Console.WriteLine("Invalid choice. Please enter a valid number.");
+                }
+
+                switch (choice)
+                {
+
+                    case 1:
+                        reportService.GetReservationHistory();
+                        break;
+                    case 2:
+                        reportService.GetVehicleUtilizationData();
+                        break;
+                    case 3:
+                        reportService.GetRevenueData();
+                        break;
+                    case 4:
                         Console.WriteLine("Exiting ");
                         return;
                 }

@@ -42,24 +42,35 @@ namespace CarConnect.Service
                 newVehicle.RegistrationNumber = Console.ReadLine();
 
                 Console.WriteLine("Availability (true/false): ");
-                if (bool.TryParse(Console.ReadLine(), out bool availability))
+                try
                 {
-                    newVehicle.Availability = availability;
-                }
-                else
+                    if (bool.TryParse(Console.ReadLine(), out bool availability))
+                    {
+                        newVehicle.Availability = availability;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("Invalid input for Availability. Please enter true or false.");
+
+                    }
+                }catch (InvalidDataException ide)
                 {
-                    throw new InvalidDataException("Invalid input for Availability. Please enter true or false.");
-
+                    Console.WriteLine(ide.Message);
                 }
-
                 Console.Write("Daily Rate: ");
-                if (decimal.TryParse(Console.ReadLine(), out decimal dailyRate))
+                try
                 {
-                    newVehicle.DailyRate = dailyRate;
-                }
-                else
+                    if (decimal.TryParse(Console.ReadLine(), out decimal dailyRate))
+                    {
+                        newVehicle.DailyRate = dailyRate;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("Invalid input for Daily Rate. Please enter a valid decimal number.");
+                    }
+                }catch(InvalidDataException ide)
                 {
-                    throw new InvalidDataException("Invalid input for Daily Rate. Please enter a valid decimal number.");
+                    Console.WriteLine(ide.Message);
                 }
 
                 if (_vehicleRepository.AddVehicle(newVehicle))
@@ -81,10 +92,17 @@ namespace CarConnect.Service
 
         public void GetAvailableVehicles()
         {
-            List<Vehicle> vehicles = _vehicleRepository.GetAvailableVehicles();
-            foreach (Vehicle vehicle in vehicles)
+            try
             {
-                Console.WriteLine(vehicle);
+                List<Vehicle> vehicles = _vehicleRepository.GetAvailableVehicles();
+                foreach (Vehicle vehicle in vehicles)
+                {
+                    Console.WriteLine(vehicle);
+                    Console.WriteLine("\n");
+                }
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -116,46 +134,52 @@ namespace CarConnect.Service
 
         public void UpdateVehicle()
         {
-            Console.WriteLine("Update Vehicle:");
-
-            Vehicle updatedVehicle = new Vehicle();
-
-            Console.Write("Enter VehicleID to update: ");
-            if (int.TryParse(Console.ReadLine(), out int vehicleID))
+            try
             {
-                Vehicle existingVehicle = _vehicleRepository.GetVehicleById(vehicleID);
+                Console.WriteLine("Update Vehicle:");
 
-                if (existingVehicle == null)
+                Vehicle updatedVehicle = new Vehicle();
+
+                Console.Write("Enter VehicleID to update: ");
+                if (int.TryParse(Console.ReadLine(), out int vehicleID))
                 {
-                    throw new VehicleNotFoundException("\"Vehicle not found. Please enter a valid VehicleID.");
+                    Vehicle existingVehicle = _vehicleRepository.GetVehicleById(vehicleID);
+
+                    if (existingVehicle == null)
+                    {
+                        throw new VehicleNotFoundException("\"Vehicle not found. Please enter a valid VehicleID.");
+                    }
+
+                    Console.WriteLine("Current Vehicle Details:");
+                    Console.WriteLine(existingVehicle);
+
+                    Console.WriteLine("Enter updated information (leave blank to keep current value):");
+
+                    Console.WriteLine("Registration Number: ");
+                    string modelInput = Console.ReadLine();
+                    updatedVehicle.RegistrationNumber = string.IsNullOrWhiteSpace(modelInput) ? existingVehicle.RegistrationNumber : modelInput;
+
+                    Console.WriteLine("Availability (true/false): ");
+                    string availabilityInput = Console.ReadLine();
+                    updatedVehicle.Availability = string.IsNullOrWhiteSpace(availabilityInput) ? existingVehicle.Availability : bool.Parse(availabilityInput);
+
+                    Console.WriteLine("Daily rate Updation (enter the value): ");
+                    string rateInput = Console.ReadLine();
+                    updatedVehicle.DailyRate = string.IsNullOrWhiteSpace(rateInput) ? existingVehicle.DailyRate : decimal.Parse(rateInput);
+
+                    if (_vehicleRepository.UpdateVehicle(updatedVehicle))
+                    {
+                        Console.WriteLine("Vehicle updated successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Vehicle not updated");
+                    }
+
                 }
-
-                Console.WriteLine("Current Vehicle Details:");
-                Console.WriteLine(existingVehicle);
-
-                Console.WriteLine("Enter updated information (leave blank to keep current value):");
-
-                Console.WriteLine("Registration Number: ");
-                string modelInput = Console.ReadLine();
-                updatedVehicle.RegistrationNumber = string.IsNullOrWhiteSpace(modelInput) ? existingVehicle.RegistrationNumber : modelInput;
-
-                Console.WriteLine("Availability (true/false): ");
-                string availabilityInput = Console.ReadLine();
-                 updatedVehicle.Availability= string.IsNullOrWhiteSpace(availabilityInput) ? existingVehicle.Availability : bool.Parse(availabilityInput);
-
-                Console.WriteLine("Daily rate Updation (enter the value): ");
-                string rateInput=Console.ReadLine();
-                updatedVehicle.DailyRate = string.IsNullOrWhiteSpace(rateInput) ? existingVehicle.DailyRate : decimal.Parse(rateInput);
-
-                if (_vehicleRepository.UpdateVehicle(updatedVehicle))
-                {
-                    Console.WriteLine("Vehicle updated successfully!");
-                }
-                else
-                {
-                    Console.WriteLine("Vehicle not updated");
-                }
-                
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

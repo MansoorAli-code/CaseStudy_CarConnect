@@ -12,7 +12,7 @@ namespace CarConnect.Service
         void GetReservationById(int id);
         void GetAllReservations();
         void CreateReservation(int id);
-        void UpdateReservation(Reservation data);
+        void UpdateReservation();
         void CancelReservation();
         void CalculateTotalCost();
     }

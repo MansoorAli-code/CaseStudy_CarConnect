@@ -67,6 +67,7 @@ namespace CarConnect.Service
                     foreach (Customer customer in customers)
                     {
                         Console.WriteLine(customer);
+                        Console.WriteLine("\n");
                     }
                 }
                 else
@@ -85,24 +86,37 @@ namespace CarConnect.Service
 
         public Customer GetCustomerById(int customerId)
         {
-            Customer customer = _customerRepository.GetCustomerByID(customerId);
-            if(customer == null)
+            try
             {
-                throw new CustomerNotFoundException("Invalid id");
+                Customer customer = _customerRepository.GetCustomerByID(customerId);
+                if (customer == null)
+                {
+                    throw new CustomerNotFoundException("Invalid id");
+                }
+                return customer;
+            }catch (CustomerNotFoundException cnfe)
+            {
+                Console.WriteLine(cnfe.Message);
             }
-            return customer;
-
+            return null;
         }
 
 
         public Customer GetCustomerByUsername(string name)
         {
-            Customer customer = _customerRepository.GetCustomerByUsername(name);
-            if (customer == null)
+            try
             {
-                throw new CustomerNotFoundException("Invalid id");
+                Customer customer = _customerRepository.GetCustomerByUsername(name);
+                if (customer == null)
+                {
+                    throw new CustomerNotFoundException("Invalid id");
+                }
+                return customer;
+            }catch(CustomerNotFoundException cnfe)
+            {
+                Console.WriteLine(cnfe.Message);
             }
-            return customer;
+            return null;
         }
 
         public bool RegisterCustomer()
@@ -150,17 +164,22 @@ namespace CarConnect.Service
 
             customer.RegistrationDate = DateTime.Now;
 
-            if(_customerRepository.RegisterCustomer(customer))
+            try
             {
-                Console.WriteLine("Customer Registered Successfully, Login with your credentials");
-                return true;
-            }
-            else
+                if (_customerRepository.RegisterCustomer(customer))
+                {
+                    Console.WriteLine("Customer Registered Successfully, Login with your credentials");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Customer not Registered, Try again");      
+                }
+            }catch(Exception ex)
             {
-                Console.WriteLine("Customer not Registered, Try again");
-                return false;
+                Console.WriteLine(ex.Message);
             }
-            
+            return false;
         }
 
         public void UpdateCustomer()
@@ -190,13 +209,20 @@ namespace CarConnect.Service
             customer.FirstName = (string.IsNullOrEmpty(firstName) ? "Not updated" : firstName);
             customer.LastName = (string.IsNullOrEmpty(lastName) ? "Not updated" : lastName);
             customer.Email = (string.IsNullOrEmpty(email) ? "Not updated" : email);
-            if (_customerRepository.UpdateCustomerDetailsByID(customer,id))
+            try
             {
-                Console.WriteLine("Updated successfully");
+                if (_customerRepository.UpdateCustomerDetailsByID(customer, id))
+                {
+                    Console.WriteLine("Updated successfully");
+                }
+                else
+                {
+                    Console.WriteLine("Updation failed");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Updation failed");
+                Console.WriteLine(ex.Message);
             }
         }
 

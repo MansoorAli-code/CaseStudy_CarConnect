@@ -31,11 +31,15 @@ namespace CarConnect.Service
         {
             Console.WriteLine("Enter Id to delete");
             int id = int.Parse(Console.ReadLine());
-            
-            if (reservationRepository.CancelReservation(id))
+
+            try
             {
-                Console.WriteLine($"The reservation {id} is succesfully cancelled");
-            }else { Console.WriteLine("The Resrvation cancellation is failed"); }
+                if (reservationRepository.CancelReservation(id))
+                {
+                    Console.WriteLine($"The reservation {id} is succesfully cancelled");
+                }
+                else { Console.WriteLine("The Resrvation cancellation is failed"); }
+            }catch(Exception e) { Console.WriteLine(e.Message); }
         }
 
         public void CreateReservation(int id)
@@ -63,7 +67,8 @@ namespace CarConnect.Service
                     TotalCost = tc,
                     Status = sts
                 };
-                reservationRepository.CreateReservation(reservation);   
+                reservationRepository.CreateReservation(reservation);
+                Console.WriteLine("The ride is confirmed.");
                 Console.WriteLine($"The total cost of the ride : {tc}Rs!!");
             }catch (Exception ex) { Console.WriteLine(ex.Message); }
         }
@@ -78,6 +83,7 @@ namespace CarConnect.Service
                     foreach (Reservation reservation in reservations)
                     {
                         Console.WriteLine(reservation);
+                        Console.WriteLine("\n");
                     }
                 }
                 else
@@ -107,6 +113,7 @@ namespace CarConnect.Service
                     foreach (Reservation reservation in reservations)
                     {
                         Console.WriteLine(reservation);
+                        Console.WriteLine("\n");
                     }
                 }
                 else
@@ -122,9 +129,19 @@ namespace CarConnect.Service
             }
         }
 
-        public void UpdateReservation(Reservation data)
+        public void UpdateReservation()
         {
-            
+            Console.WriteLine("Enter Id Of Reservation To Update the status");
+            int id = int.Parse(Console.ReadLine());
+            Console.WriteLine(" Is the status Conifirmed or pending: ");
+            string status = Console.ReadLine();
+            try
+            {
+                reservationRepository.UpdateReservation(id, status);
+            } catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         
